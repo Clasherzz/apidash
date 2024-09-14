@@ -7,6 +7,7 @@ void main() {
   final codeGen = Codegen();
 
   group('GET Request', () {
+    //normal 
     test('GET1', () {
       const expectedCode = r"""
 use curl::easy::Easy;
@@ -35,6 +36,7 @@ fn main() {
           codeGen.getCode(CodegenLanguage.rustCurl, requestModelGet1, "https"),
           expectedCode);
     });
+    //normal with params
     test('GET2', () {
       const expectedCode = r"""
 use curl::easy::Easy;
@@ -63,6 +65,7 @@ fn main() {
           codeGen.getCode(CodegenLanguage.rustCurl, requestModelGet2, "https"),
           expectedCode);
     });
+    //params
     test('GET3', () {
       const expectedCode = r"""
 use curl::easy::Easy;
@@ -91,6 +94,7 @@ fn main() {
           codeGen.getCode(CodegenLanguage.rustCurl, requestModelGet3, "https"),
           expectedCode);
     });
+    //multilple params
     test('GET4', () {
       const expectedCode = r"""
 use curl::easy::Easy;
