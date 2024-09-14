@@ -20,25 +20,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
     let url = "{{url}}".parse::<Uri>().unwrap();
+
 """;
 
   String kTemplateMethod = """
     let req = Request::builder()
         .method("{{method}}")
-        .uri(url)""";
+        .uri(url)
+        
+    """;
 
   String kTemplateHeaders = """
         {% for key, val in headers %}
         .header("{{key}}", "{{val}}"){% if not loop.last %}{% endif %}
         {% endfor %}
+
   """;
 
   String kTemplateBody = """
-        .body(Body::from(r#"{{body}}"#))?;
+    .body(Body::from(r#"{{body}}"#))?;
+
 """;
 
   String kTemplateJsonBody = """
-        .body(Body::from(json!({{body}}).to_string()))?;
+    .body(Body::from(json!({{body}}).to_string()))?;
+
 """;
 
   String kTemplateFormData = """
@@ -49,6 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let body = serde_urlencoded::to_string(&form_data)?;
     let req = req.body(Body::from(body))?;
+
 """;
 
   final String kTemplateRequestEnd = """
@@ -61,6 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
 """;
 
   String? getCode(HttpRequestModel requestModel) {
@@ -76,10 +84,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         url,
         requestModel.enabledParams,
       );
+    
       Uri? uri = rec.$1;
+      print(rec);
       if (uri != null) {
         result += jj.Template(kTemplateStart).render({
-          "url": stripUriParams(uri),
+          // "url": stripUriParams(uri),
+          "url":uri,
           'hasJsonBody': requestModel.bodyContentType == ContentType.json,
           'method': requestModel.method.name.toUpperCase(),
         });
