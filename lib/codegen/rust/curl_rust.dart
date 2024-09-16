@@ -97,6 +97,7 @@ fn main() {
       );
 
       Uri? uri = rec.$1;
+      print(rec);
       var harJson =
           requestModelToHARJsonRequest(requestModel, useEnabled: true);
 

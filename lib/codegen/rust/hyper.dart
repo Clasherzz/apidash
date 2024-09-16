@@ -202,33 +202,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
     let url = "{{ url }}".parse::<Uri>().unwrap();
+
 """;
 
   final String kTemplateMethod = """
     let req = Request::builder()
-        .method("{{ method }}")
-        .uri(url)
+              .method("{{ method }}")
+              .uri(url)
 """;
 
   final String kTemplateHeaders = """
         {% for key, val in headers %}
-        .header("{{ key }}", "{{ val }}"){% if not loop.last %}{% endif %}
+              .header("{{ key }}", "{{ val }}"){% if not loop.last %}{% endif %}
         {% endfor %}
 """;
 
   final String kTemplateBody = """
         
-        .body(Body::from(r#"{{ body }}"#))?;\n
+              .body(Body::from(r#"{{ body }}"#))?;\n
 """;
 
   final String kTemplateJsonBody = """
         
-        .body(Body::from(json!({{ body }}).to_string()))?;\n
+              .body(Body::from(json!({{ body }}).to_string()))?;\n
 """;
 
   final String kTemplateEmptyBody = """
 
-        .body(Body::empty())?;\n
+              .body(Body::empty())?;\n
 """;
 
   final String kTemplateFormData = """
