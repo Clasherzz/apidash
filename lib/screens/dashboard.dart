@@ -68,9 +68,9 @@ class Dashboard extends ConsumerWidget {
                     ),
                     kVSpacer10,
                     IconButton(
-                      isSelected: railIdx == 0,
+                      isSelected: railIdx == 3,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 0;
+                        ref.read(navRailIndexStateProvider.notifier).state = 3;
                       },
                       icon: const Icon(Icons.file_upload),
                       selectedIcon: const Icon(Icons.file_upload)
