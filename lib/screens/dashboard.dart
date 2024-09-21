@@ -66,6 +66,20 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 0,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 0;
+                      },
+                      icon: const Icon(Icons.file_upload),
+                      selectedIcon: const Icon(Icons.file_upload)
+                      ),
+                      Text(
+                      'RAML',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+
                   ],
                 ),
                 Expanded(
