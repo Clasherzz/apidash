@@ -1,0 +1,42 @@
+#%RAML 1.0
+title: Dynamic API
+baseUri: https://api.example.com
+
+/resource1:
+  get:
+    headers:
+      Authorization:
+        description: API key
+        required: true
+    queryParameters:
+      id:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Success"
+              }
+  post:
+    body:
+      application/json:
+        example: |
+          {
+            "name": "Test"
+          }
+
+/resource2:
+  put:
+    headers:
+      Authorization:
+        description: API key
+        required: true
+    body:
+      application/json:
+        example: |
+          {
+            "data": "Updated"
+          }

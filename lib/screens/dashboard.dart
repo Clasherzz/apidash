@@ -1,8 +1,12 @@
+import 'package:apidash/services/raml_services.dart';
+import 'package:apidash/utils/file_utils.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import '../models/RAMLcollection.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -69,8 +73,11 @@ class Dashboard extends ConsumerWidget {
                     kVSpacer10,
                     IconButton(
                       isSelected: railIdx == 3,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 3;
+                      onPressed: () async {
+                        RAMLService r = new RAMLService();
+                        XFile? f = await pickFile();
+                        RAMLCollection m =await r.parseRamlFile(f?.path);
+                        printRequestModels(m);
                       },
                       icon: const Icon(Icons.file_upload),
                       selectedIcon: const Icon(Icons.file_upload)
