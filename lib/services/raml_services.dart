@@ -67,27 +67,28 @@ class RAMLService {
     // Iterate through top-level keys to find endpoints
     for (var endpointPath in parsedRaml.keys) {
       var endpointDefinition = parsedRaml[endpointPath];
+      print(endpointDefinition);
 
       // Check if this key represents an endpoint (assumed structure)
-      if (endpointDefinition is Map) {
-        // Iterate through possible methods (get, post, put, etc.)
-        for (var method in endpointDefinition.keys) {
-          var methodDefinition = endpointDefinition[method];
+      // if (endpointDefinition is Map) {
+      //   // Iterate through possible methods (get, post, put, etc.)
+      //   for (var method in endpointDefinition.keys) {
+      //     var methodDefinition = endpointDefinition[method];
 
-          // Create HttpRequestModel for each method in the endpoint
-          if (methodDefinition is Map) {
-            HttpRequestModel requestModel = HttpRequestModel(
-              method: _getMethod(method),
-              url: endpointPath,
-              headers: _getHeadersFromMethodDefinition(methodDefinition),
-              params: _getParamsFromMethodDefinition(methodDefinition),
-              bodyContentType: _getContentTypeFromMethodDefinition(methodDefinition),
-              body: _getBodyFromMethodDefinition(methodDefinition),
-            );
-            requestModels.add(requestModel);
-          }
-        }
-      }
+      //     // Create HttpRequestModel for each method in the endpoint
+      //     if (methodDefinition is Map) {
+      //       HttpRequestModel requestModel = HttpRequestModel(
+      //         method: _getMethod(method),
+      //         url: endpointPath,
+      //         headers: _getHeadersFromMethodDefinition(methodDefinition),
+      //         params: _getParamsFromMethodDefinition(methodDefinition),
+      //         bodyContentType: _getContentTypeFromMethodDefinition(methodDefinition),
+      //         body: _getBodyFromMethodDefinition(methodDefinition),
+      //       );
+      //       requestModels.add(requestModel);
+      //     }
+      //   }
+      // }
     }
 
     return requestModels;
