@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+//import '../models/RAMLcollection.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -66,6 +68,23 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    // IconButton(
+                    //   isSelected: railIdx == 3,
+                    //   onPressed: () async {
+                    //     RAMLService r = new RAMLService();
+                    //     XFile? f = await pickFile();
+                    //     RAMLCollection m =await r.parseRamlFile(f?.path);
+                    //     printRequestModels(m);
+                    //   },
+                    //   icon: const Icon(Icons.file_upload),
+                    //   selectedIcon: const Icon(Icons.file_upload)
+                    //   ),
+                    //   Text(
+                    //   'RAML',
+                    //   style: Theme.of(context).textTheme.labelSmall,
+                    // ),
+
                   ],
                 ),
                 Expanded(

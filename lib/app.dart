@@ -1,5 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'package:apidash/widgets/overlay_widget.dart';
+import 'package:flutter/services.dart'; // Import to use LogicalKeyboardKey
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +10,7 @@ import 'services/services.dart';
 import 'extensions/extensions.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
+
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -101,6 +102,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 }
 
+
 class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
@@ -111,46 +113,80 @@ class DashApp extends ConsumerWidget {
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
-    return Portal(
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: kLightMaterialAppTheme,
-        darkTheme: kDarkMaterialAppTheme,
-        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: showWorkspaceSelector
-            ? WorkspaceSelector(
-                onContinue: (val) async {
-                  await openBoxes(kIsDesktop, val);
-                  ref
-                      .read(settingsProvider.notifier)
-                      .update(workspaceFolderPath: val);
-                },
-                onCancel: () async {
-                  try {
-                    await windowManager.destroy();
-                  } catch (e) {
-                    debugPrint(e.toString());
-                  }
-                },
-              )
-            : Stack(
-                children: [
-                  !kIsLinux && !kIsMobile
-                      ? const App()
-                      : context.isMediumWindow
-                          ? const MobileDashboard()
-                          : const Dashboard(),
-                  if (kIsWindows)
-                    SizedBox(
-                      height: 29,
-                      child: WindowCaption(
-                        backgroundColor: Colors.transparent,
-                        brightness:
-                            isDarkMode ? Brightness.dark : Brightness.light,
-                      ),
-                    ),
-                ],
-              ),
+  //implement the overlay widget for this from sidebar savebutton and then you will be done
+  Future<void> _triggerSave() async {
+  print('Ctrl + S pressed: Save action triggered');
+
+
+              await ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .saveData();
+            
+
+}
+    
+  KeyEventResult handleKeyEvent(FocusNode node, KeyEvent event){
+  
+  if (event is KeyDownEvent) {
+    print("pressed");
+    // Check if the Control key is pressed and if the key is "S".
+    if (HardwareKeyboard.instance.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyS) {
+      _triggerSave();
+      return KeyEventResult.handled;
+    }
+  }
+  
+  return KeyEventResult.ignored;
+}
+
+    return Focus(
+      autofocus: true,
+
+    onKeyEvent: handleKeyEvent,
+        focusNode: FocusNode(),
+        child: Portal(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: kLightMaterialAppTheme,
+            darkTheme: kDarkMaterialAppTheme,
+            themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: showWorkspaceSelector
+                ? WorkspaceSelector(
+                    onContinue: (val) async {
+                      await openBoxes(kIsDesktop, val);
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(workspaceFolderPath: val);
+                    },
+                    onCancel: () async {
+                      try {
+                        await windowManager.destroy();
+                      } catch (e) {
+                        debugPrint(e.toString());
+                      }
+                    },
+                  )
+                : Stack(
+                    children: [
+                      !kIsLinux && !kIsMobile
+                          ? const App()
+                          : context.isMediumWindow
+                              ? const MobileDashboard()
+                              : const Dashboard(),
+                      if (kIsWindows)
+                        SizedBox(
+                          height: 29,
+                          child: WindowCaption(
+                            backgroundColor: Colors.transparent,
+                            brightness:
+                                isDarkMode ? Brightness.dark : Brightness.light,
+                          ),
+                        ),
+                    ],
+                  ),
+                  //check at the sidebar_savebutton and try to implement the overlay hre to show saved
+          ),
+      
       ),
     );
   }
