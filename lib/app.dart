@@ -108,85 +108,104 @@ class DashApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
-    final workspaceFolderPath = ref
-        .watch(settingsProvider.select((value) => value.workspaceFolderPath));
+    final overlayWidget = OverlayWidgetTemplate(context: context);
+    final isDarkMode = ref.watch(settingsProvider.select((value) => value.isDark));
+    final workspaceFolderPath = ref.watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
-  //implement the overlay widget for this from sidebar savebutton and then you will be done
-  Future<void> _triggerSave() async {
-  print('Ctrl + S pressed: Save action triggered');
 
+    Future<void> _triggerSave() async {
+      print('Ctrl + S pressed: Save action triggered');
 
-              await ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .saveData();
-            
+      // overlayWidget.show(widget: const SavingOverlay(saveCompleted: false));
+      // await ref.read(collectionStateNotifierProvider.notifier).saveData();
+      // overlayWidget.hide();
 
-}
-    
-  KeyEventResult handleKeyEvent(FocusNode node, KeyEvent event){
-  
-  if (event is KeyDownEvent) {
-    print("pressed");
-    // Check if the Control key is pressed and if the key is "S".
-    if (HardwareKeyboard.instance.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyS) {
-      _triggerSave();
-      return KeyEventResult.handled;
+      // overlayWidget.show(widget: const SavingOverlay(saveCompleted: true));
+      // await Future.delayed(const Duration(seconds: 1));
+      // overlayWidget.hide();
+   
     }
-  }
-  
-  return KeyEventResult.ignored;
+
+    void showPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Popup Title"),
+        content: Text("This is the content of the popup."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text("Close"),
+          ),
+        ],
+      );
+    },
+  );
 }
+
+
+    KeyEventResult handleKeyEvent(FocusNode node, KeyEvent event) {
+      if (event is KeyDownEvent) {
+        print("Key pressed");
+        if (HardwareKeyboard.instance.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyS) {
+          _triggerSave();
+          return KeyEventResult.handled;
+        }
+      }
+      return KeyEventResult.ignored;
+    }
 
     return Focus(
       autofocus: true,
-
-    onKeyEvent: handleKeyEvent,
-        focusNode: FocusNode(),
-        child: Portal(
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: kLightMaterialAppTheme,
-            darkTheme: kDarkMaterialAppTheme,
-            themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: showWorkspaceSelector
-                ? WorkspaceSelector(
-                    onContinue: (val) async {
-                      await openBoxes(kIsDesktop, val);
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(workspaceFolderPath: val);
-                    },
-                    onCancel: () async {
-                      try {
-                        await windowManager.destroy();
-                      } catch (e) {
-                        debugPrint(e.toString());
-                      }
-                    },
-                  )
-                : Stack(
-                    children: [
-                      !kIsLinux && !kIsMobile
-                          ? const App()
-                          : context.isMediumWindow
-                              ? const MobileDashboard()
-                              : const Dashboard(),
-                      if (kIsWindows)
-                        SizedBox(
-                          height: 29,
-                          child: WindowCaption(
-                            backgroundColor: Colors.transparent,
-                            brightness:
-                                isDarkMode ? Brightness.dark : Brightness.light,
-                          ),
-                        ),
-                    ],
-                  ),
-                  //check at the sidebar_savebutton and try to implement the overlay hre to show saved
-          ),
-      
+      onKeyEvent: handleKeyEvent,
+      focusNode: FocusNode(),
+      child: Portal(
+        child: Overlay(  // Add Overlay here
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: kLightMaterialAppTheme,
+                darkTheme: kDarkMaterialAppTheme,
+                themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+                home: showWorkspaceSelector
+                    ? WorkspaceSelector(
+                        onContinue: (val) async {
+                          await openBoxes(kIsDesktop, val);
+                          ref.read(settingsProvider.notifier).update(workspaceFolderPath: val);
+                        },
+                        onCancel: () async {
+                          try {
+                            await windowManager.destroy();
+                          } catch (e) {
+                            debugPrint(e.toString());
+                          }
+                        },
+                      )
+                    : Stack(
+                        children: [
+                          !kIsLinux && !kIsMobile
+                              ? const App()
+                              : context.isMediumWindow
+                                  ? const MobileDashboard()
+                                  : const Dashboard(),
+                          if (kIsWindows)
+                            SizedBox(
+                              height: 29,
+                              child: WindowCaption(
+                                backgroundColor: Colors.transparent,
+                                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+                              ),
+                            ),
+                        ],
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
