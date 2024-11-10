@@ -163,10 +163,7 @@ class DashApp extends ConsumerWidget {
       onKeyEvent: handleKeyEvent,
       focusNode: FocusNode(),
       child: Portal(
-        child: Overlay(  // Add Overlay here
-          initialEntries: [
-            OverlayEntry(
-              builder: (context) => MaterialApp(
+       child:  MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: kLightMaterialAppTheme,
                 darkTheme: kDarkMaterialAppTheme,
@@ -204,9 +201,11 @@ class DashApp extends ConsumerWidget {
                       ),
               ),
             ),
-          ],
-        ),
-      ),
+          
+      
+      
+        
+      
     );
   }
 }
