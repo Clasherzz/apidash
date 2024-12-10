@@ -116,18 +116,44 @@ http.Client createHttpClientWithNoSSL() {
 
 void main() async {
  
-  Uri uri = Uri.parse("https://expired.badssl.com/");
+  // Uri uri = Uri.parse("https://expired.badssl.com/");
   
 
+  // http.Client client = createHttpClientWithNoSSL();
+
+  // try {
+
+  //   final response = await client.get(uri);
+  //   print(response.body);
+  // } catch (e) {
+  //   print("Error: $e");
+  // } finally {
+  //   client.close();  
+  // }
+   Uri uri = Uri.parse("https://localhost:3443/upload");
   http.Client client = createHttpClientWithNoSSL();
 
   try {
+    var request = http.MultipartRequest("POST", uri);
 
-    final response = await client.get(uri);
-    print(response.body);
+    request.fields['field1'] = 'value1';
+    request.fields['field2'] = 'value2';
+
+
+  
+    var streamedResponse = await client.send(request);
+
+  //  request.files.add(await http.MultipartFile.fromPath(
+  //     'file',
+  //     'C:/Users/HP/Downloads/DBMS',
+  //   ));
+    var response = await http.Response.fromStream(streamedResponse);
+
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
   } catch (e) {
     print("Error: $e");
   } finally {
-    client.close();  
+    client.close();
   }
 }
