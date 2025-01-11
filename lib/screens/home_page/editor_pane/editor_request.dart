@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/sync_url_card.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -29,6 +30,7 @@ class RequestEditor extends StatelessWidget {
               children: [
                 RequestEditorTopBar(),
                 EditorPaneRequestURLCard(),
+                SyncEditorPaneRequestURLCard(),
                 kVSpacer10,
                 Expanded(
                   child: EditorPaneRequestDetailsCard(),

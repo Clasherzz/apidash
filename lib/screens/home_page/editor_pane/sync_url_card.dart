@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,8 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
 
-class EditorPaneRequestURLCard extends StatelessWidget {
-  const EditorPaneRequestURLCard({super.key});
+class SyncEditorPaneRequestURLCard extends StatelessWidget {
+  const SyncEditorPaneRequestURLCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +30,19 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         child: context.isMediumWindow
             ? const Row(
                 children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer5,
+                  
                   Expanded(
-                    child: URLTextField(),
+                    child: SyncURLTextField(),
                   ),
                 ],
               )
             : const Row(
                 children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer20,
+                  
                   Expanded(
-                    child: URLTextField(),
+                    child: SyncURLTextField(),
                   ),
-                  kHSpacer20,
-                  SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
+                  
                 ],
               ),
       ),
@@ -55,29 +50,8 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   }
 }
 
-class DropdownButtonHTTPMethod extends ConsumerWidget {
-  const DropdownButtonHTTPMethod({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.method));
-    return DropdownButtonHttpMethod(
-      method: method,
-      onChanged: (HTTPVerb? value) {
-        final selectedId = ref.read(selectedRequestModelProvider)!.id;
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, method: value);
-      },
-    );
-  }
-}
-
-class URLTextField extends ConsumerWidget {
-  const URLTextField({
+class SyncURLTextField extends ConsumerWidget {
+  const SyncURLTextField({
     super.key,
   });
 
@@ -96,33 +70,10 @@ class URLTextField extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId, url: value);
       },
-      
-    );
-  }
-}
-
-class SendRequestButton extends ConsumerWidget {
-  final Function()? onTap;
-  const SendRequestButton({
-    super.key,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(selectedIdStateProvider);
-    final isWorking = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.isWorking));
-
-    return SendButton(
-      isWorking: isWorking ?? false,
-      onTap: () {
-        onTap?.call();
+      onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
-      onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
-      },
     );
   }
 }
+
