@@ -757,7 +757,7 @@ packages:
     source: hosted
     version: "1.0.0"
   graphql:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: graphql
       sha256: c715080993c8481087ce77b7929224222551823769fb150f5816f9bbbee9e589

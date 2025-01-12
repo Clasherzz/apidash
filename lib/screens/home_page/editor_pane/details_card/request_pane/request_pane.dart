@@ -9,6 +9,24 @@ import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 import 'package:apidash/consts.dart';
+
+List<Widget> getChildrenForApiType(APIType apitype) {
+    switch (apitype) {
+      case APIType.rest:
+        return const [
+          EditRequestURLParams(),
+          EditRequestHeaders(),
+          EditRequestBody(),
+        ];
+      case APIType.graphql:
+        return const [
+          EditRequestHeaders(),
+          EditGraphqlQuery(),
+          EditGraphqlVariable(),
+        ];
+  }
+}
+
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
   
@@ -50,18 +68,9 @@ class EditRequestPane extends ConsumerWidget {
         headerLength > 0,
         hasBody,
       ],
-      children: [
-        if(apitype == APIType.rest)...[
-            EditRequestURLParams(),
-            EditRequestHeaders(),
-            EditRequestBody(),
-        ]else if(apitype == APIType.graphql)...[
-            EditRequestHeaders(),
-            EditGraphqlQuery(),
-            EditGraphqlVariable()
-        ]
-       
-      ],
+      children: getChildrenForApiType(apitype!),
     );
   }
 }
+
+
