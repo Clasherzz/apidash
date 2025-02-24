@@ -72,6 +72,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             }
             http.StreamedResponse multiPartResponse =
                 await multiPartRequest.send();
+            httpClientManager
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
                 await convertStreamedResponse(multiPartResponse);

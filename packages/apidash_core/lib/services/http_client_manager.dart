@@ -16,6 +16,7 @@ class HttpClientManager {
   static const int _maxCancelledRequests = 100;
   final Map<String, http.Client> _clients = {};
   final Queue<String> _cancelledRequests = Queue();
+  final Map<String, Future<http.StreamedResponse>> _pendingRequests = {};
 
   factory HttpClientManager() {
     return _instance;
@@ -32,6 +33,8 @@ class HttpClientManager {
     _clients[requestId] = client;
     return client;
   }
+
+  void addMultipart(Strin)
 
   void cancelRequest(String? requestId) {
     if (requestId != null && _clients.containsKey(requestId)) {
