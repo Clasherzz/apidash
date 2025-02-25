@@ -13,13 +13,17 @@ typedef HttpResponse = http.Response;
 final httpClientManager = HttpClientManager();
 
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
-  String requestId,
-  APIType apiType,
-  HttpRequestModel requestModel, {
-  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
-  bool noSSL = false,
-}) async {
+    String requestId,
+    APIType apiType,
+    HttpRequestModel requestModel, {
+      SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+      bool noSSL = false,
+    }) async {
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+
+  if(httpClientManager.wasRequestCancelled(requestId)){
+    httpClientManager.removeCancelledRequest(requestId);
+  }
 
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -71,11 +75,17 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               }
             }
             http.StreamedResponse multiPartResponse =
-                await multiPartRequest.send();
-            httpClientManager
+            await client.send(multiPartRequest);
+
+            StreamSubscription<List<int>>? subscription = multiPartResponse.stream.listen(
+                ());
+            // if (httpClientManager.wasRequestCancelled(requestId)) {
+            //   print("enter cancellation");
+            //   subscription.cancel();
+            // }
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
-                await convertStreamedResponse(multiPartResponse);
+            await convertStreamedResponse(multiPartResponse);
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
@@ -88,19 +98,19 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             break;
           case HTTPVerb.post:
             response =
-                await client.post(requestUrl, headers: headers, body: body);
+            await client.post(requestUrl, headers: headers, body: body);
             break;
           case HTTPVerb.put:
             response =
-                await client.put(requestUrl, headers: headers, body: body);
+            await client.put(requestUrl, headers: headers, body: body);
             break;
           case HTTPVerb.patch:
             response =
-                await client.patch(requestUrl, headers: headers, body: body);
+            await client.patch(requestUrl, headers: headers, body: body);
             break;
           case HTTPVerb.delete:
             response =
-                await client.delete(requestUrl, headers: headers, body: body);
+            await client.delete(requestUrl, headers: headers, body: body);
             break;
         }
       }
@@ -121,6 +131,9 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           headers: headers,
           body: body,
         );
+      }
+      if(httpClientManager.wasRequestCancelled(requestId)){
+        throw Error();
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
