@@ -25,5 +25,11 @@ Graph QL Variables: #576
 Graph QL Introspection.
 
 
+
 Idea description:
-My proposal is to improve the application by introducing new feautures and to enhance the existing feautures .
+
+My proposal is to improve the application by introducing new feautures and to enhance the existing feautures of the application and try my best to make the application helpful developers in a wider spectrum. 
+
+Below are the feautures i look forward of adding 
+
+WebSocket Support
