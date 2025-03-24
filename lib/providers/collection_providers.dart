@@ -289,6 +289,33 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+
+    // if(requestModel.apiType == APIType.sse) {
+    //   print("inside sse");
+    //   await startSSEStream(
+    //     requestId,
+    //     apiType,
+    //     substitutedHttpRequestModel,
+    //     onListen: (controller) {
+    //       controller.stream.listen((event) {
+    //      requestModel = map[requestId];
+    //      HttpRequestModel currentHttpRequestModel = requestModel!.httpRequestModel!;
+    //      currentHttpRequestModel = currentHttpRequestModel.copyWith(
+    //       : event,
+    //      );
+
+    // state = map;
+            
+    //       });
+    //     },
+    //     onError: (error) {
+    //       print(error);
+    //     },
+    //     defaultUriScheme: defaultUriScheme,
+    //     noSSL: noSSL,
+    //   );
+    //   return;
+    // }
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
@@ -342,6 +369,10 @@ class CollectionStateNotifier
 
     unsave();
   }
+
+
+
+
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
