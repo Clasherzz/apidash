@@ -67,6 +67,7 @@ class HttpResponseModel with _$HttpResponseModel {
 
   String? get contentType => headers?.getValueContentType();
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
+
   static Stream<SSEEventModel> parseSSEEvents(Stream<List<int>> byteStream) async* {
     final utf8Stream = byteStream.transform(utf8.decoder).transform(const LineSplitter());
 
@@ -76,11 +77,11 @@ class HttpResponseModel with _$HttpResponseModel {
       }
     }
   }
-  HttpResponseModel fromResponse({
+  Future<HttpResponseModel> fromResponse({
     required Response response,
     
     Duration? time,
-  }) {
+  }) async{
     final responseHeaders = mergeMaps(
         {HttpHeaders.contentLengthHeader: response.contentLength.toString()},
         response.headers);
@@ -89,11 +90,11 @@ class HttpResponseModel with _$HttpResponseModel {
         ? utf8.decode(response.bodyBytes)
         : response.body;
   Stream<SSEEventModel>? sseEvents;
-  if (mediaType?.mimeType == 'text/event-stream') {
-    sseEvents = parseSSEEvents(Stream.value(response.bodyBytes  as List<int>));
+  // if (mediaType?.mimeType == 'text/event-stream') {
+  //   sseEvents =await parseSSEEvents(Stream.value(response.bodyBytes  as List<int>));
     
   
-  }
+  // }
     return HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
