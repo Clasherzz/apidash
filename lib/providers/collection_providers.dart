@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +17,7 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final collection = ref.watch(collectionStateNotifierProvider);
   if (selectedId == null || collection == null) {
     return null;
-  } else {
+;  } else {
     return collection[selectedId];
   }
 });
@@ -23,6 +25,25 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];
+});
+
+final sseProvider = StreamProvider<List<String>>((ref) async* {
+  final url = Uri.parse("http://your-server.com/sse");
+  final response = await ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+
+  List<String> events = [];
+  Stream<List<int>> byteStream = Stream.value(response.bodyBytes  as List<int>);
+  final utf8Stream = byteStream.transform(utf8.decoder).transform(const LineSplitter());
+
+    await for (final event in utf8Stream) {
+      if (event.isNotEmpty) {
+        yield SSEEventModel.fromRawSSE(event);  // ✅ Emit each event lazily
+      }
+    }
+  await for (var chunk in response.stream.transform(const Utf8Decoder())) {
+    events.insert(0, chunk);  
+    yield List.from(events);   // Emit updated list
+  }
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
@@ -290,32 +311,7 @@ class CollectionStateNotifier
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
 
-    // if(requestModel.apiType == APIType.sse) {
-    //   print("inside sse");
-    //   await startSSEStream(
-    //     requestId,
-    //     apiType,
-    //     substitutedHttpRequestModel,
-    //     onListen: (controller) {
-    //       controller.stream.listen((event) {
-    //      requestModel = map[requestId];
-    //      HttpRequestModel currentHttpRequestModel = requestModel!.httpRequestModel!;
-    //      currentHttpRequestModel = currentHttpRequestModel.copyWith(
-    //       : event,
-    //      );
-
-    // state = map;
-            
-    //       });
-    //     },
-    //     onError: (error) {
-    //       print(error);
-    //     },
-    //     defaultUriScheme: defaultUriScheme,
-    //     noSSL: noSSL,
-    //   );
-    //   return;
-    // }
+    
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
