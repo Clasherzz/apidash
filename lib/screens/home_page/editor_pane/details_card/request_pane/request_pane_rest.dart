@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'request_file.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
@@ -52,6 +53,7 @@ class EditRestRequestPane extends ConsumerWidget {
       ],
       children: const [
         EditRequestURLParams(),
+        DragDropFileUpload(),
         EditRequestHeaders(),
         EditRequestBody(),
       ],

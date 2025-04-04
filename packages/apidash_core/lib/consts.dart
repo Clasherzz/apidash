@@ -76,10 +76,14 @@ const kSubTypeFormData = "form-data";
 
 const kSubTypeDefaultViewOptions = 'all';
 
+
+const kTypeOctetStream = 'application/octet-stream';
+
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
   formdata("$kTypeMultipart/$kSubTypeFormData");
+ // octectstream(kTypeApplication);
 
   const ContentType(this.header);
   final String header;
